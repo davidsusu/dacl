@@ -1,6 +1,6 @@
 # David's (Super-Simple) Configuration Language
 
-:construction: This isnder design.
+:construction: This is under design.
 
 DACL is a really simple and predictable configuration language.
 It has a minimalistic mental model without dirty magic,
@@ -12,10 +12,10 @@ DACL shares some similarities with YAML (indentation) and INI (key-value pairs).
 However, it has its own concepts:
 
 - maximum obviousness and simplicity, no implicit magic
-- describes a list of string to string key-value pairs, no data types
+- describes a list of string-to-string key-value pairs, no data types
 - indentation-based hierarchy
 - hierarchy of prefix scopes, but the output is flat
-- supports comments and empty lines
+- supports comments and no-op empty lines
 - supports quotes and escape sequences
 - long content can be described using continuation lines without any magic of autoadding newlines or spaces
 - UTF-8
