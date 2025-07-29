@@ -1,6 +1,6 @@
 # David's (Super-Simple) Configuration Language
 
-:construction: This is under design.
+:construction: DACL is still under design.
 
 DACL is a really simple and predictable configuration language.
 It has a minimalistic mental model without dirty magic,
@@ -218,7 +218,7 @@ So, it would be the responsibility of the user how strict is the processing.
 So there are some rules that can be violated,
 but in this case a warning will be generated.
 
-### Unexpected exit from single/double quoted sequence
+### :warning: Unexpected exit from single/double quoted sequence
 
 If a quoted string is still open when the end of line reached (newline or end of input),
 the string will be forcefully terminated.
@@ -241,7 +241,7 @@ key2 = Some other value
 
 Result:
 
-### Unexpected exit from unicode codepoint sequence
+### :warning: Unexpected exit from unicode codepoint sequence
 
 If end of line or a character that's not a hexadecimal digit nor an ending curly bracket,
 the sequence will be forcefully terminated.
@@ -260,7 +260,7 @@ Same as:
 key = Some \u{12} 34\} value
 ```
 
-### Missing value for unicode codepoint sequence
+### :warning: Missing value for unicode codepoint sequence
 
 An escaped `u` character (`\u`) not followed by starting curly bracket (`{}`) will output nothing.
 
@@ -276,7 +276,7 @@ Same as:
 key = Some  value
 ```
 
-### Empty unicode codepoint sequence
+### :warning: Empty unicode codepoint sequence
 
 An empty unicode codepoint sequence (`\u{}`) will output nothing.
 
@@ -292,7 +292,7 @@ Same as:
 key = Some  value
 ```
 
-### Unexpected exit from escape sequence
+### :warning: Unexpected exit from escape sequence
 
 If a dangling escape character (`\`) is at the end of a line/input,
 it will be ignored entirely.
@@ -311,7 +311,7 @@ key1 = Some value
 key2 = Some other value
 ```
 
-### Suspicious assign operator in value continuation
+### :warning: Suspicious assign operator in value continuation
 
 When a value continuation line contains an unescaped and unquoted assign operator char (`=`),
 it will be part of the content.
@@ -330,7 +330,7 @@ Same as:
 key1 = Some valuekey2 = Other value
 ```
 
-### Irregular decrease of indentation
+### :warning: Irregular decrease of indentation
 
 When indentation decreases, it will be interpreted at the less level of in the hierarchy stack,
 thats indentation is not greater.
@@ -393,7 +393,7 @@ prefix1.prefix5.key11 = value11
 key12 = value12
 ```
 
-### Unusual input
+### :warning: Unusual input
 
 Any white-space and non-printable character except space and line separation characters (newline, carriage return)
 will be interpreted like to non-special printable characters (e.g. `a`).
