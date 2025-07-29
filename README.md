@@ -17,7 +17,8 @@ However, it has its own concepts:
 - hierarchy of prefix scopes, but the output is flat
 - supports comments and no-op empty lines
 - supports quotes and escape sequences
-- long content can be described using continuation lines without any magic of autoadding newlines or spaces
+- long content can be described using continuation lines
+  without any magic of autoadding/normalizing newlines or spaces
 - UTF-8
 
 ## Questions
@@ -200,8 +201,248 @@ These are special escape sequences:
 
 - `\|` nothing (can be used e.g. for preventing space collapse between parts)
 - `\n` newline
+- `\r` carriage return
 - `\t` tab
 - `\u{...}` any unicode character by its hexadecimal codepoint
 - (etc.)
 
 Any other escaped letter will mean itself (e.g. `\.`).
+
+## Warnings
+
+I tend to define DACL as non-failable.
+This means that any random textual input could be a parseable DACL configuration.
+However, parseable doesn't mean fully valid.
+So, it would be the responsibility of the user how strict is the processing.
+
+So there are some rules that can be violated,
+but in this case a warning will be generated.
+
+### Unexpected exit from single/double quoted sequence
+
+If a quoted string is still open when the end of line reached (newline or end of input),
+the string will be forcefully terminated.
+The input before is used as it would be closed normally
+(the entire unclosed content will be part of the output).
+
+Example:
+
+```
+key1 = What's the situation?
+key2 = Some other value
+```
+
+Same as:
+
+```
+key1 = Whats the situation?
+key2 = Some other value
+```
+
+Result:
+
+### Unexpected exit from unicode codepoint sequence
+
+If end of line or a character that's not a hexadecimal digit nor an ending curly bracket,
+the sequence will be forcefully terminated.
+The hexadecimal digits before will be used as it would be closed normally
+(the corresponding unicode character will be part of the output).
+
+Example:
+
+```
+key = Some \u{12 34} value
+```
+
+Same as:
+
+```
+key = Some \u{12} 34\} value
+```
+
+### Missing value for unicode codepoint sequence
+
+An escaped `u` character (`\u`) not followed by starting curly bracket (`{}`) will output nothing.
+
+Example:
+
+```
+key = Some \u value
+```
+
+Same as:
+
+```
+key = Some  value
+```
+
+### Empty unicode codepoint sequence
+
+An empty unicode codepoint sequence (`\u{}`) will output nothing.
+
+Example:
+
+```
+key = Some \u{} value
+```
+
+Same as:
+
+```
+key = Some  value
+```
+
+### Unexpected exit from escape sequence
+
+If a dangling escape character (`\`) is at the end of a line/input,
+it will be ignored entirely.
+
+Example:
+
+```
+key1 = Some value\
+key2 = Some other value\
+```
+
+Same as:
+
+```
+key1 = Some value
+key2 = Some other value
+```
+
+### Suspicious assign operator in value continuation
+
+When a value continuation line contains an unescaped and unquoted assign operator char (`=`),
+it will be part of the content.
+The goal of the warning is to prevent accidentally indented assignments.
+
+Example:
+
+```
+key1 = Some value
+ key2 = Other value
+```
+
+Same as:
+
+```
+key1 = Some valuekey2 = Other value
+```
+
+### Irregular decrease of indentation
+
+When indentation decreases, it will be interpreted at the less level of in the hierarchy stack,
+thats indentation is not greater.
+The indentation of this level will not be changed.
+
+```
+  key1 = value1
+prefix1.
+  prefix2.
+      key2 = value2
+    key3 = value3
+      key4 = value4
+    key5 = value5
+        key6 = value6
+  key7 = value7
+  prefix3.
+    key8 = value8
+ key9 = value9
+    key10 = value10
+  prefix4.
+ prefix5.
+   key11 = value11
+key12 = value12
+```
+
+Same as:
+
+    
+```
+key1 = value1
+prefix1.
+  prefix2.
+    key2 = value2
+    key3 = value3
+    key4 = value4
+    key5 = value5key6 = value6
+  key7 = value7
+  prefix3.
+    key8 = value8
+  key9 = value9
+    key10 = value10
+  prefix4.
+  prefix5.
+    key11 = value11
+key12 = value12
+```
+
+So also same as:
+
+```
+key1 = value1
+prefix1.prefix2.key2 = value2
+prefix1.prefix2.key3 = value3
+prefix1.prefix2.key4 = value4
+prefix1.prefix2.key5 = value5key6 = value6
+prefix1.key7 = value7
+prefix1.prefix3.key8 = value8
+prefix1.key9 = value9key10 = value10
+prefix1.prefix5.key11 = value11
+key12 = value12
+```
+
+### Unusual input
+
+Any white-space and non-printable character except space and line separation characters (newline, carriage return)
+will be interpreted like to non-special printable characters (e.g. `a`).
+The major goal of the warning is to alert about malicious content.
+Another goal is to warn if tab characters are used, e.g. for indentation.
+Tabs can not be used for indentation, just like in YAML you can use only space for this purpose.
+
+## Recommendations for users
+
+- Use two spaces for indentation.
+- Use one single space before the assignment operator, and another after it.
+- Do not provide value content in the assignment line if there will be continuation lines.
+- Use separate continuation lines for spacing between sentences in a value continuation sequence (obvious and VCS-friendly).
+  For example:
+
+  ```
+  paragraph =
+    This is the first sentence.
+    ' '
+    This is the second sentence.
+    ' '
+    This is yet another one.
+    ' '
+    This is the last sentence in this paragraph.
+  ```
+
+- For contents with uneven left use the `\|` no-op sequence at the beginning of each line.
+  It will 
+  For example:
+
+  ```
+  codeblock =
+    \|int[] a = [1, 5, 2, 7, 3, 4, 6];\n
+    \|\n
+    \|for (v in a) {\n
+    \|    if (v > 3) {\n
+    \|        print(v);\n
+    \|    }\n
+    \|}\n
+  ```
+
+## Recommendations for syntax highlighters
+
+- make keys and key prefixes heavier
+- add some different background color behind key/value content
+  to distinghush from leading/trailing spaces and comments
+- mark starting/ending quotes with another background color,
+  but not their content
+- make escape sequences easily distinghushable from normal content
+- make comments more restrained
+- mark unusual input characters (at least whitespaces), e.g. with red background, make all of them visible if possible
+- when no live linter is available, it would be nice to mark other warning locations too, e.g. with yellow background
