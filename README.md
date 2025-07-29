@@ -231,15 +231,12 @@ Example:
 key1 = What's the situation?
 key2 = Some other value
 ```
-
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key1 = Whats the situation?
 key2 = Some other value
 ```
-
-Result:
 
 ### :warning: Unexpected exit from unicode codepoint sequence
 
@@ -254,7 +251,7 @@ Example:
 key = Some \u{12 34} value
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key = Some \u{12} 34\} value
@@ -270,7 +267,7 @@ Example:
 key = Some \u value
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key = Some  value
@@ -286,7 +283,7 @@ Example:
 key = Some \u{} value
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key = Some  value
@@ -304,7 +301,7 @@ key1 = Some value\
 key2 = Some other value\
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key1 = Some value
@@ -324,7 +321,7 @@ key1 = Some value
  key2 = Other value
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key1 = Some valuekey2 = Other value
@@ -356,7 +353,7 @@ prefix1.
 key12 = value12
 ```
 
-Same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
     
 ```
@@ -378,7 +375,7 @@ prefix1.
 key12 = value12
 ```
 
-So also same as:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :arrow_down_small::arrow_down_small::arrow_down_small:
 
 ```
 key1 = value1
