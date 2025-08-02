@@ -443,3 +443,39 @@ Tabs can not be used for indentation, just like in YAML you can use only space f
 - make comments more restrained
 - mark unusual input characters (at least whitespaces), e.g. with red background, make all of them visible if possible
 - when no live linter is available, it would be nice to mark other warning locations too, e.g. with yellow background
+
+## Recommendations for prorcessors
+
+- use dot (`.`) and colon (`:`) both as fieldname separator
+- ignore trailing colon but not dot
+- use square bracket pair (`[]`) as list item appender
+
+An example using these recommendations:
+
+```
+lorem.ipsum:
+  [] = Hello
+  [] = World
+dolor:
+  sit:
+    AAA = aaa
+  amet:
+    BBB: = bbb
+    CCC. = ccc
+```
+
+Equivalent YAML:
+
+```yaml
+lorem:
+  ipsum:
+    - Hello
+    - World
+dolor:
+  sit:
+    AAA: aaa
+  amet:
+    BBB: bbb
+    CCC:
+      '': ccc
+```
